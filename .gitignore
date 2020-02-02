@@ -1,0 +1,6 @@
+.idea/
+.vscode/
+node_modules/
+cypress/node_modules/
+videos/
+screenshots/

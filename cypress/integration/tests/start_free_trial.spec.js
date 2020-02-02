@@ -1,94 +1,64 @@
-// site constants
-const URL = 'https://www.surveygizmo.com/';
+import HomePage from '../../page_objects/home.page.js';
+import PlansPricingPage from '../../page_objects/plan_pricing.page.js';
+import CreateAccountModal from '../../page_objects/create_account.modal.js';
+import '../../support/commands.js'
 
-//elements
-const logo = '.main-navigation__brand a';
-const startTrialButton_Header = '.main-navigation__cta a.-trial';
-const startTrialButton_Testimonals = '.ui-button-rounded--style-fill-black';
-const startTrialButton_Footer = '.ui-button-rounded span';
-const createAccountButton = '.ui-button-rounded--size-small';
-const createAccountModal = '.ui-modal__container';
-const createAccountModalCloseButton = '.ui-modal__close-button';
-const planBlock_Basic = '[data-plan="basic"] > .block-plan-column-v2__wrapper > .block-plan-column-v2__header';
-const planBlock_Professional = '[data-plan="standard"] > .block-plan-column-v2__wrapper > .block-plan-column-v2__header';
-const planBlock_FullAccess = '[data-plan="full"] > .block-plan-column-v2__wrapper > .block-plan-column-v2__header';
-const planBlock_Enterprise = '[data-plan="custom"] > .block-plan-column-v2__wrapper > .block-plan-column-v2__header';
-const planBlock_Free = '.block-plan-free';
-const planComparison_Header = '.block-plans-comparison-v2__header';
-const freeTrialButton = '.ui-button-rounded--size-small';
-const planFooter = '.block-cta-bottom > .sg-block__wrapper';
-const freeTrialButton_Footer = '.block-cta-bottom__buttons .ui-button-rounded--style-outline-secondary';
+const home = new HomePage();
+const planPricing = new PlansPricingPage();
+const createAcct = new CreateAccountModal();
 
-
-//labels
-let startTrialTitle = 'Start a free trial';
-const createAccountLabel = 'CREATE ACCOUNT';
-const createAccountModalTitle = 'Create your account.';
-
-
-//Tests
 context('Home Page - Start Free Trial', () => {
 
     it('should go to the homepage', () => {
-        cy.visit(URL + 'plans-pricing/');
-        cy.get(logo).should('be.visible');
+        home.visit();
+        home.getLogo().should('be.visible');
     });
 
-    /*
     it('should have a Start Free Trial button in Header', () => {
 
-        cy.get(startTrialButton_Header)
-            .contains(startTrialTitle)
+        home.getStartTrialButton_Header()
             .should('be.visible')
             .click();
-        cy.location('pathname').should('include', 'plans-pricing');
+        cy.location('pathname').should('include', planPricing.route);
 
-        //Go back to the homepage using back button
-        cy.go('back');
-        cy.location('pathname').should('not.include', 'plans-pricing');
+        //Go back to the homepage using logo
+        home.getLogo().click();
+        cy.location('pathname').should('not.include', planPricing.route);
 
      });
 
+
     it('should have a Start Free Trial button in Testimonials', () => {
 
-        startTrialTitle = 'START a free trial';
-        cy.get('.home-v2 .section-testimonials__buttons')
-            .find(startTrialButton_Testimonals)
-            .contains(startTrialTitle)
+        home.getStartTrialButton_Testimonials()
             .scrollIntoView()
             .should('be.visible')
             .click({force: true});
-        cy.location('pathname').should('include', 'plans-pricing');
+        cy.location('pathname').should('include', planPricing.route);
 
-        //Go back to the homepage using logo
-        cy.get(logo).click();
-        cy.location('pathname').should('not.include', 'plans-pricing');
+        //Go back to the homepage using Back button
+        cy.go('back');
+        cy.location('pathname').should('not.include', planPricing.route);
 
     });
 
     it('should have a Start Free Trial button in Footer', () => {
 
-        startTrialTitle = 'start a free trial';
-        cy.get(startTrialButton_Footer)
-            .contains(startTrialTitle)
+        home.getStartTrialButton_Footer()
             .scrollIntoView()
             .should('be.visible')
             .click({force: true});
-        cy.location('pathname').should('include', 'plans-pricing');
+        cy.location('pathname').should('include', planPricing.route);
 
     });
-    */
 
 });
 
-context('Plans Page - Create Account', () => {
+context('Plans Page - Start Free Trial', () => {
 
     it('should have a Start Free Trial button in Collaborator plan', () => {
 
-        startTrialTitle = 'START FREE TRIAL';
-        cy.get(planBlock_Basic)
-            .find(freeTrialButton)
-            .contains(startTrialTitle)
+        planPricing.getStartTrialButton_Plan('collaborator')
             .scrollIntoView()
             .should('be.visible');
 
@@ -96,9 +66,7 @@ context('Plans Page - Create Account', () => {
 
     it('should have a Start Free Trial button in Professional plan', () => {
 
-        cy.get(planBlock_Professional)
-            .find(freeTrialButton)
-            .contains(startTrialTitle)
+        planPricing.getStartTrialButton_Plan('professional')
             .scrollIntoView()
             .should('be.visible');
 
@@ -106,9 +74,7 @@ context('Plans Page - Create Account', () => {
 
     it('should have a Start Free Trial button in Full Access plan', () => {
 
-        cy.get(planBlock_FullAccess)
-            .find(freeTrialButton)
-            .contains(startTrialTitle)
+        planPricing.getStartTrialButton_Plan('full access')
             .scrollIntoView()
             .should('be.visible');
 
@@ -116,17 +82,15 @@ context('Plans Page - Create Account', () => {
 
     it('should NOT have a Start Free Trial button in Enterprise plan', () => {
 
-        cy.get(planBlock_Enterprise)
-            .contains(startTrialTitle)
+        planPricing.getEnterpriseBlock()
+            .contains('START FREE TRIAL')
             .should('not.exist');
 
     });
 
     it('should have a Create Account button in the Free Account section', () => {
 
-        cy.get(planBlock_Free)
-            .find(createAccountButton)
-            .contains(createAccountLabel)
+        planPricing.getCreateAccountButton_FreeAccount()
             .scrollIntoView()
             .should('be.visible');
 
@@ -134,37 +98,118 @@ context('Plans Page - Create Account', () => {
 
     it('should have a Create Account button and Start Free Trial buttons in the Comparison Header', () => {
 
-        cy.get(planComparison_Header)
-            .contains(createAccountLabel)
-            .scrollIntoView()
-            .should('be.visible');
-
-        cy.get(planComparison_Header)
-            .get(freeTrialButton).contains(startTrialTitle).then(function (btns) {
-            expect(btns.length).to.eql(3);
+        planPricing.getStartTrialButtons_PlanComparison().then(function (btns) {
+            expect(btns.length).to.eql(4);
         });
 
     });
 
     it('should have a Start Free Trial button in the page footer', () => {
 
-        startTrialTitle = 'start a free trial';
-        cy.get(planFooter)
-            .find(freeTrialButton_Footer)
-            .contains(startTrialTitle)
+        planPricing.getStartTrialButton_Footer()
             .scrollIntoView()
             .should('be.visible');
 
     });
 
-    /*
     it('should display a Create Account modal', () => {
-        cy.get(createAccountButton)
-            .contains(createAccountLabel)
+        planPricing.getCreateAccountButton_FreeAccount()
             .scrollIntoView()
             .should('be.visible')
             .click({force: true});
-        cy.get(createAccountModalHeader).contains(createAccountModalTitle).should('be.visible');
+        createAcct.getTitle().contains(createAcct.title).should('be.visible');
     });
-    */
+
 });
+
+context('Create Account Modal - UI Validation', () => {
+
+    it('should not submit if form has not been filled out', () => {
+        createAcct.getSubmitButton().click({force:true});
+        createAcct.getTitle().contains(createAcct.title).should('be.visible');
+    });
+
+    it('should require first name', () => {
+        createAcct.getFirstNameLabel().contains('First name:*').should('be.visible');
+        createAcct.getFirstNameError().contains('Please complete this required field.').should('be.visible');
+    });
+
+    it('should require last name', () => {
+        createAcct.getLastNameLabel().contains('Last name:*').should('be.visible');
+        createAcct.getLastNameError().contains('Please complete this required field.').should('be.visible');
+    });
+
+    it('should require email', () => {
+        createAcct.getEmailLabel().contains('Email Address*').should('be.visible');
+        createAcct.getEmailError().contains('Please complete this required field.').should('be.visible');
+    });
+
+    it('should describe email as username ', () => {
+       createAcct.getEmailDesc().contains('* This will be your username').should('be.visible');
+    });
+
+    it('should require password', () => {
+        createAcct.getPasswordLabel().contains('Password:*').should('be.visible');
+        createAcct.getPasswordError().contains('Please complete this required field.').should('be.visible');
+    });
+
+    it('should require organization', () => {
+        createAcct.getOrganizationLabel().contains('Organization:*').should('be.visible');
+        createAcct.getOrganziationError().contains('Please complete this required field.').should('be.visible');
+    });
+
+    it('should require industry', () => {
+        createAcct.getIndustryLabel().contains('Industry:*').should('be.visible');
+        createAcct.getIndustryError().contains('Please select an option from the dropdown menu.').should('be.visible');
+    });
+
+    it('should require department', () => {
+        createAcct.getDepartmentLabel().contains('Department:*').should('be.visible');
+        createAcct.getDepartmentError().contains('Please select an option from the dropdown menu.').should('be.visible');
+    });
+
+    it('should require data center', () => {
+        createAcct.getDataCenterLabel().contains('Data Center:*').should('be.visible');
+    });
+
+    it('should require consent', () => {
+        createAcct.getSubmitButton().scrollIntoView();
+       createAcct.getConsentLabel().contains('By accessing and using this page, you agree to our service ' +
+           'agreement and privacy policy. Your information will never be shared.*').should('exist');
+       createAcct.getConsentError().contains('Please complete this required field.').should('be.visible');
+    });
+
+    it('should have service agreement link', () => {
+        createAcct.getServiceAgreementLink().should('have.attr', 'href', 'https://www.surveygizmo.com/service-agreement/');
+    });
+
+    it('should have privacy policy link', () => {
+        createAcct.getPrivacyPolicyLink().should('have.attr', 'href', 'https://www.surveygizmo.com/privacy/');
+    });
+
+    //NOTE: I would add this same validation on all dropdown values (their lists are long)
+    it('should have the correct Data Center options', () => {
+        createAcct.getDataCenterOptions().then(options => {
+            const actual = [...options].map(o => o.value);
+            expect(actual).to.have.members(createAcct.dataCenters);
+        })
+    });
+
+
+//TODO: Add password validation
+
+//TODO: Add email validation (@test.com)
+});
+
+context('Create Account Modal - Create Account', () => {
+    it('should successfully create an account', () => {
+
+        cy.fixture('users.json').then((users)  => {
+            let user = users[0];
+            cy.createAccount(true, user.fname, user.lname, user.email,
+                user.password, user.org, user.industry, user.dept, user.dataCenter, true);
+        });
+
+    });
+});
+

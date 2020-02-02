@@ -1,0 +1,22 @@
+[
+  {
+    "fname": "Test",
+    "lname": "O'Boy-Hyphen",
+    "email": "sgtest@gmail.com" ,
+    "password": "Testing123!",
+    "org": "Vandelay Industries",
+    "industry": "Research",
+    "dept": "Human Resources",
+    "dataCenter": "US"
+  },
+  {
+    "fname": "Susan",
+    "lname": "Test",
+    "email": "sgtest_susan@gmail.com" ,
+    "password": "Testing123!",
+    "org": "Vandelay Industries",
+    "industry": "Research",
+    "dept": "Human Resources",
+    "dataCenter": "US"
+  }
+]
