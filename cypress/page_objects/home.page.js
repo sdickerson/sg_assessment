@@ -5,6 +5,8 @@ class HomePage {
     }
 
     visit() {
+        //update base url
+        Cypress.config('baseUrl', 'https://www.surveygizmo.com');
         cy.visit(this.route);
     }
 

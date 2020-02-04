@@ -25,28 +25,40 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
 import CreateAccountModal from '../page_objects/create_account.modal.js';
+import LoginPage from '../page_objects/login.page.js';
 import * as utils from './utilities.js';
 
-Cypress.Commands.add("createAccount", (generateUnique, fname, lname, email, password, org, industry, dept, dataCenter, subscribe) => {
+Cypress.Commands.add("createAccount", (generateUnique, fname, lname, email, password, org, industry, dept, dataCenter, subscribe, doSubmit) => {
 
     const createAcct = new CreateAccountModal();
 
     if (generateUnique) {
         lname = lname + utils.getTimestamp();
         email = utils.generateEmailAddress(email.substring(0,email.indexOf('@')), email.substring(email.indexOf('@')));
+        cy.log('Generated user: ' + email + ' Pwd: ' + password );
     }
     Cypress.config('userEmail', email);
-    createAcct.getFirstName().type(fname);
-    createAcct.getLastName().type(lname);
-    createAcct.getEmail().type(email);
-    createAcct.getPassword().type(password);
-    createAcct.getOrganization().type(org);
+    cy.log('User is set to = ' + Cypress.config('userEmail'));
+    createAcct.getFirstName().clear().type(fname);
+    createAcct.getLastName().clear().type(lname);
+    createAcct.getEmail().clear().type(email);
+    createAcct.getPassword().clear().type(password);
+    createAcct.getOrganization().clear().type(org);
     createAcct.getIndustry().select(industry).should('have.value', industry);
     createAcct.getDepartment().select(dept).should('have.value', dept);
     createAcct.getDataCenter().select(dataCenter).should('have.value', dataCenter);
     if (subscribe) createAcct.getSubscriptionCheckbox().check({force:true});
     createAcct.getConsentCheckbox().check({force:true});
-    //createAcct.getSubmitButton().click();
-    //createAcct.getSuccessMessage().contains('Thanks for submitting the form').should('be.visible');
+
+    if (doSubmit) {
+        createAcct.getSubmitButton().click();
+    }
 
 });
+
+Cypress.Commands.add("login", (email, password) => {
+    const login = new LoginPage();
+    login.getUsername().clear().type(email);
+    login.getPassword().clear().type(password);
+    login.getSubmitButton().click();
+})

@@ -1,6 +1,8 @@
 class PlansPricingPage {
 
     constructor() {
+        //update base url
+        Cypress.config('baseUrl', 'https://www.surveygizmo.com');
         this.route = '/plans-pricing/';
     }
 
